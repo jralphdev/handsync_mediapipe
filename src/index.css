@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+
+@layer base {
+  body {
+    @apply bg-black text-white;
+  }
+}
+
+@layer components {
+  .video-container {
+    @apply relative h-screen w-screen overflow-hidden;
+
+    .video {
+      @apply size-full object-contain max-md:object-cover -scale-x-100;
+    }
+
+    .canvas {
+      @apply pointer-events-none absolute inset-0 size-full object-contain max-md:object-cover -scale-x-100;
+    }
+
+    .filter-btn {
+      @apply absolute bottom-25 left-1/2 -translate-x-1/2 rounded-2xl border border-[#03d6ff33] bg-[#03d6ff33] px-7 py-3 font-medium tracking-wider shadow-md backdrop-blur-[5px] transition hover:bg-[#03d6ff4d];
+    }
+  }
+}

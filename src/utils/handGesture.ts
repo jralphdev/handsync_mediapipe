@@ -5,7 +5,7 @@ const INDEX_TIP = 8;
 const WRIST = 0;
 const MIDDLE_MCP = 9;
 
-const PINCH_RATIO = 0.35;
+const PINCH_RATIO = 0.25;
 
 export const isPinching = (hand: NormalizedLandmark[]) => {
   const thumb = hand[THUMB_TIP];

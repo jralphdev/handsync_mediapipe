@@ -11,20 +11,37 @@ export const useHandLandmarker = () => {
     let animationFrame = 0;
     let stream: MediaStream | undefined;
     let landmarker: Awaited<ReturnType<typeof createHandLandmarker>>;
+    let cancelled = false;
 
     const start = async () => {
       const video = videoRef.current;
 
       if (!video) return;
 
-      stream = await navigator.mediaDevices.getUserMedia({
+      const cameraStream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
 
+      if (cancelled) {
+        cameraStream.getTracks().forEach((track) => track.stop());
+        return;
+      }
+
+      stream = cameraStream;
       video.srcObject = stream;
+
       await video.play();
 
-      landmarker = await createHandLandmarker();
+      if (cancelled) return;
+
+      const handLandmarker = await createHandLandmarker();
+
+      if (cancelled) {
+        handLandmarker.close();
+        return;
+      }
+
+      landmarker = handLandmarker;
 
       const detect = () => {
         if (video.videoWidth) {
@@ -40,9 +57,11 @@ export const useHandLandmarker = () => {
     start();
 
     return () => {
+      cancelled = true;
       cancelAnimationFrame(animationFrame);
       stream?.getTracks().forEach((track) => track.stop());
       landmarker?.close();
+      resultRef.current = null;
     };
   }, []);
 

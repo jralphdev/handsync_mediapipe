@@ -18,8 +18,24 @@
       @apply pointer-events-none absolute inset-0 size-full object-contain max-md:object-cover -scale-x-100;
     }
 
-    .filter-btn {
-      @apply absolute bottom-25 left-1/2 -translate-x-1/2 rounded-2xl border border-[#03d6ff33] bg-[#03d6ff33] px-7 py-3 font-medium tracking-wider shadow-md backdrop-blur-[5px] transition hover:bg-[#03d6ff4d];
+    .controls {
+      @apply absolute bottom-25 left-1/2 -translate-x-1/2 flex items-center gap-2;
+
+      .filter-btn {
+        @apply rounded-2xl border border-[#03d6ff33] bg-[#03d6ff33] px-7 py-3 font-medium tracking-wider shadow-md backdrop-blur-[5px];
+
+        &.hover {
+          @apply scale-130;
+        }
+      }
+
+      .close-btn {
+        @apply rounded-full border border-[#03d6ff33] bg-[#03d6ff33] p-3 shadow-md backdrop-blur-[5px];
+
+        &.hover {
+          @apply scale-130;
+        }
+      }
     }
   }
 }

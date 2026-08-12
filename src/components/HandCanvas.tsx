@@ -1,34 +1,31 @@
 import { useEffect, useRef } from 'react';
 
+import { useHandTracking } from '../context/HandTrackingContext';
 import { drawFilterFrame, drawHand } from '../utils/handDrawing';
 import { applyFilter } from '../utils/filterEffect';
-import { useHandTracking } from '../context/HandTrackingContext';
-
-type HandCanvasProps = {
-  filterEnabled: boolean;
-  filterIndex: number;
-};
+import type { HandCanvasProps } from '../types';
 
 const HandCanvas = ({ filterEnabled, filterIndex }: HandCanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { videoRef, resultRef } = useHandTracking();
+  const { videoRef, subscribe } = useHandTracking();
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const video = videoRef.current;
 
-    if (!canvas || !video) return;
+    if (!canvas || !video) {
+      return;
+    }
 
     const ctx = canvas.getContext('2d');
 
-    if (!ctx) return;
+    if (!ctx) {
+      return;
+    }
 
-    let animationFrame = 0;
-
-    const render = () => {
+    const unsubscribe = subscribe((result) => {
       if (!video.videoWidth) {
-        animationFrame = requestAnimationFrame(render);
         return;
       }
 
@@ -42,7 +39,7 @@ const HandCanvas = ({ filterEnabled, filterIndex }: HandCanvasProps) => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      const hands = resultRef.current?.landmarks ?? [];
+      const hands = result?.landmarks ?? [];
 
       if (filterEnabled && hands.length === 2) {
         applyFilter(ctx, video, hands, canvas, filterIndex);
@@ -53,14 +50,10 @@ const HandCanvas = ({ filterEnabled, filterIndex }: HandCanvasProps) => {
       for (const hand of hands) {
         drawHand(ctx, hand, canvas);
       }
+    });
 
-      animationFrame = requestAnimationFrame(render);
-    };
-
-    render();
-
-    return () => cancelAnimationFrame(animationFrame);
-  }, [filterEnabled, filterIndex, resultRef, videoRef]);
+    return unsubscribe;
+  }, [filterEnabled, filterIndex, subscribe, videoRef]);
 
   return (
     <>

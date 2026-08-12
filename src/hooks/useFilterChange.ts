@@ -6,7 +6,7 @@ import { isPinching } from '../utils/handGesture';
 const PINCH_COOLDOWN = 500;
 
 export const useFilterChange = (enabled: boolean, onChange: () => void) => {
-  const { resultRef } = useHandTracking();
+  const { subscribe } = useHandTracking();
 
   const pinchingRef = useRef(false);
   const lastChangeRef = useRef(0);
@@ -17,12 +17,10 @@ export const useFilterChange = (enabled: boolean, onChange: () => void) => {
       return;
     }
 
-    let animationFrame = 0;
+    const unsubscribe = subscribe((result) => {
+      const hands = result?.landmarks ?? [];
+      const pinching = hands.some((hand) => isPinching(hand, pinchingRef.current));
 
-    const checkPinch = () => {
-      const hands = resultRef.current?.landmarks ?? [];
-
-      const pinching = hands.some(isPinching);
       const now = performance.now();
 
       if (pinching && !pinchingRef.current && now - lastChangeRef.current > PINCH_COOLDOWN) {
@@ -31,12 +29,8 @@ export const useFilterChange = (enabled: boolean, onChange: () => void) => {
       }
 
       pinchingRef.current = pinching;
+    });
 
-      animationFrame = requestAnimationFrame(checkPinch);
-    };
-
-    checkPinch();
-
-    return () => cancelAnimationFrame(animationFrame);
-  }, [enabled, resultRef, onChange]);
+    return unsubscribe;
+  }, [enabled, onChange, subscribe]);
 };

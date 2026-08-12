@@ -1,11 +1,6 @@
 import { createContext, useContext } from 'react';
-import type { HandLandmarkerResult } from '@mediapipe/tasks-vision';
 import { useHandLandmarker } from '../hooks/useHandLandMarker';
-
-type HandTrackingContextValue = {
-  videoRef: React.RefObject<HTMLVideoElement | null>;
-  resultRef: React.RefObject<HandLandmarkerResult | null>;
-};
+import type { HandTrackingContextValue } from '../types';
 
 const HandTrackingContext = createContext<HandTrackingContextValue | null>(null);
 

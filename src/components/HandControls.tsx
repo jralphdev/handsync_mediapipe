@@ -1,37 +1,52 @@
 import { useRef } from 'react';
-import { XIcon } from 'lucide-react';
+import { Music2Icon, SparkleIcon, XIcon } from 'lucide-react';
 import { useHandInteraction } from '../hooks/useHandInteraction';
+import type { HandControlsProps } from '../types';
 
-type HandControlsProps = {
-  filterEnabled: boolean;
-  onFilter: () => void;
-  onClose: () => void;
-};
-
-const HandControls = ({ filterEnabled, onFilter, onClose }: HandControlsProps) => {
+const HandControls = ({
+  filterEnabled,
+  pianoEnabled,
+  onFilter,
+  onPiano,
+  onClose,
+}: HandControlsProps) => {
   const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const pianoButtonRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const buttonRef = filterEnabled ? closeButtonRef : filterButtonRef;
+  const active = filterEnabled || pianoEnabled;
 
-  const handleClick = filterEnabled ? onClose : onFilter;
+  const closeHover = useHandInteraction(closeButtonRef, onClose);
 
-  const isHovering = useHandInteraction(buttonRef, handleClick);
+  const filterHover = useHandInteraction(filterButtonRef, onFilter);
+
+  const pianoHover = useHandInteraction(pianoButtonRef, onPiano);
 
   return (
     <div className='controls'>
-      {filterEnabled ? (
+      {active ? (
         <button
           ref={closeButtonRef}
-          className={`close-btn ${isHovering ? 'hover' : ''}`}
-          aria-label='Close filter'
+          className={`close-btn ${closeHover ? 'hover' : ''}`}
+          aria-label='Close'
         >
-          <XIcon className='size-6' />
+          <XIcon className='size-7' />
         </button>
       ) : (
-        <button ref={filterButtonRef} className={`filter-btn ${isHovering ? 'hover' : ''}`}>
-          Filter
-        </button>
+        <>
+          <button
+            ref={filterButtonRef}
+            className={`control-btn ${filterHover ? 'hover' : ''}`}
+          >
+            <SparkleIcon className='size-4.5' />
+            <span>Filter Effects</span>
+          </button>
+
+          <button ref={pianoButtonRef} className={`control-btn ${pianoHover ? 'hover' : ''}`}>
+            <Music2Icon className='size-4.5' />
+            <span>Piano</span>
+          </button>
+        </>
       )}
     </div>
   );

@@ -1,11 +1,19 @@
-import { useEffect, useRef } from 'react';
-import type { HandLandmarkerResult } from '@mediapipe/tasks-vision';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { createHandLandmarker } from '../lib/mediapipe';
+import type { Listener } from '../types';
 
 export const useHandLandmarker = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const resultRef = useRef<HandLandmarkerResult | null>(null);
+  const listenersRef = useRef(new Set<Listener>());
+
+  const subscribe = useCallback((listener: Listener) => {
+    listenersRef.current.add(listener);
+
+    return () => {
+      listenersRef.current.delete(listener);
+    };
+  }, []);
 
   useEffect(() => {
     let animationFrame = 0;
@@ -13,45 +21,60 @@ export const useHandLandmarker = () => {
     let landmarker: Awaited<ReturnType<typeof createHandLandmarker>>;
     let cancelled = false;
 
+    const video = videoRef.current;
+    if (!video) return;
+
     const start = async () => {
-      const video = videoRef.current;
+      try {
+        const cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: 'user',
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        });
 
-      if (!video) return;
-
-      const cameraStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
-
-      if (cancelled) {
-        cameraStream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-
-      stream = cameraStream;
-      video.srcObject = stream;
-
-      await video.play();
-
-      if (cancelled) return;
-
-      const handLandmarker = await createHandLandmarker();
-
-      if (cancelled) {
-        handLandmarker.close();
-        return;
-      }
-
-      landmarker = handLandmarker;
-
-      const detect = () => {
-        if (video.videoWidth) {
-          resultRef.current = landmarker.detectForVideo(video, performance.now());
+        if (cancelled) {
+          cameraStream.getTracks().forEach((track) => track.stop());
+          return;
         }
 
-        animationFrame = requestAnimationFrame(detect);
-      };
+        stream = cameraStream;
+        video.srcObject = stream;
 
-      detect();
+        await video.play();
+
+        if (cancelled) return;
+
+        const handLandmarker = await createHandLandmarker();
+
+        if (cancelled) {
+          handLandmarker.close();
+          return;
+        }
+
+        landmarker = handLandmarker;
+
+        const detect = () => {
+          if (cancelled) return;
+
+          if (video.videoWidth) {
+            const result = landmarker.detectForVideo(video, performance.now());
+
+            listenersRef.current.forEach((listener) => {
+              listener(result);
+            });
+          }
+
+          animationFrame = requestAnimationFrame(detect);
+        };
+
+        detect();
+      } catch (error) {
+        if (!cancelled) {
+          console.error('Failed to start hand tracking:', error);
+        }
+      }
     };
 
     start();
@@ -61,12 +84,13 @@ export const useHandLandmarker = () => {
       cancelAnimationFrame(animationFrame);
       stream?.getTracks().forEach((track) => track.stop());
       landmarker?.close();
-      resultRef.current = null;
+      video.pause();
+      video.srcObject = null;
     };
   }, []);
 
   return {
     videoRef,
-    resultRef,
+    subscribe,
   };
 };

@@ -11,26 +11,30 @@
     @apply relative h-screen w-screen overflow-hidden;
 
     .video {
-      @apply size-full object-contain max-md:object-cover -scale-x-100;
+      @apply size-full object-contain max-lg:object-cover -scale-x-100;
     }
 
     .canvas {
-      @apply pointer-events-none absolute inset-0 size-full object-contain max-md:object-cover -scale-x-100;
+      @apply pointer-events-none absolute inset-0 size-full object-contain max-lg:object-cover -scale-x-100;
     }
 
     .controls {
-      @apply absolute bottom-25 left-1/2 -translate-x-1/2 flex items-center gap-2;
+      @apply absolute bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-5 max-sm:gap-10;
 
-      .filter-btn {
-        @apply rounded-2xl border border-[#03d6ff33] bg-[#03d6ff33] px-7 py-3 font-medium tracking-wider shadow-md backdrop-blur-[5px];
+      .control-btn {
+        @apply flex items-center gap-3 rounded-2xl max-sm:rounded-full border border-gray-500 bg-gray-900 px-7 py-3 max-sm:p-6 shadow-md backdrop-blur-md;
+
+        span {
+          @apply font-medium max-sm:text-sm max-sm:hidden tracking-wider;
+        }
 
         &.hover {
-          @apply scale-130;
+          @apply scale-120;
         }
       }
 
       .close-btn {
-        @apply rounded-full border border-[#03d6ff33] bg-[#03d6ff33] p-3 shadow-md backdrop-blur-[5px];
+        @apply absolute -top-28 max-sm:-top-25 rounded-full border border-gray-500 bg-gray-900 p-3 shadow-md backdrop-blur-md;
 
         &.hover {
           @apply scale-130;

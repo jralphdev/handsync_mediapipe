@@ -17,9 +17,7 @@ const HandControls = ({
   const active = filterEnabled || pianoEnabled;
 
   const closeHover = useHandInteraction(closeButtonRef, onClose);
-
   const filterHover = useHandInteraction(filterButtonRef, onFilter);
-
   const pianoHover = useHandInteraction(pianoButtonRef, onPiano);
 
   return (

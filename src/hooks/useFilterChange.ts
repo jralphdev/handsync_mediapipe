@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
 import { useHandTracking } from '../context/HandTrackingContext';
-import { isPinching } from '../utils/handGesture';
+import { isPinching } from '../utils/hand/gestures';
 
 const PINCH_COOLDOWN = 500;
 

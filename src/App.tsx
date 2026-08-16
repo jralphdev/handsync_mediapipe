@@ -3,9 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import HandCanvas from './components/HandCanvas';
 import HandControls from './components/HandControls';
 import { useFilterChange } from './hooks/useFilterChange';
-import { FILTER_COUNT } from './utils/filterEffect';
-import { PianoAudio } from './lib/pianoAudio';
+import { PianoAudio } from './lib/audio/pianoAudio';
 import { usePiano } from './hooks/usePiano';
+import { FILTER_COUNT } from './utils/filters/effects';
 
 const App = () => {
   const [filterEnabled, setFilterEnabled] = useState(false);

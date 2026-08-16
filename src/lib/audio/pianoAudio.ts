@@ -1,5 +1,5 @@
-import { NOTE_FREQUENCIES } from '../constants';
-import type { ActiveNote, PianoNote } from '../types';
+import { NOTE_FREQUENCIES } from '../../constants';
+import type { ActiveNote, PianoNote } from '../../types';
 
 export class PianoAudio {
   private context: AudioContext | null = null;
@@ -17,9 +17,7 @@ export class PianoAudio {
   }
 
   play(note: PianoNote) {
-    if (!this.context || this.activeNotes.has(note)) {
-      return;
-    }
+    if (!this.context || this.activeNotes.has(note)) return;
 
     const oscillator = this.context.createOscillator();
     const gain = this.context.createGain();
@@ -45,9 +43,7 @@ export class PianoAudio {
   stop(note: PianoNote) {
     const activeNote = this.activeNotes.get(note);
 
-    if (!activeNote || !this.context) {
-      return;
-    }
+    if (!activeNote || !this.context) return;
 
     const now = this.context.currentTime;
 
@@ -71,7 +67,7 @@ export class PianoAudio {
     this.stopAll();
 
     if (this.context) {
-      this.context.close();
+      await this.context.close();
       this.context = null;
     }
   }

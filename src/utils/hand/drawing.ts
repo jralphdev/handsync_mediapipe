@@ -1,10 +1,6 @@
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
-import { HAND_CONNECTIONS, LANDMARK } from '../constants';
-
-const toCanvasPoint = (landmark: NormalizedLandmark, canvas: HTMLCanvasElement) => ({
-  x: landmark.x * canvas.width,
-  y: landmark.y * canvas.height,
-});
+import { toCanvasPoint } from './coordinates';
+import { HAND_CONNECTIONS, LANDMARK } from '../../constants';
 
 export const drawHand = (
   ctx: CanvasRenderingContext2D,
@@ -13,9 +9,9 @@ export const drawHand = (
 ) => {
   const points = landmarks.map((landmark) => toCanvasPoint(landmark, canvas));
 
-  ctx.strokeStyle = '#fff';
-  ctx.fillStyle = '#fff';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#0BF40B';
+  ctx.fillStyle = '#EB6437';
+  ctx.lineWidth = 2;
 
   for (const [start, end] of HAND_CONNECTIONS) {
     ctx.beginPath();
@@ -51,12 +47,10 @@ export const drawFilterFrame = (
   }
 
   ctx.closePath();
-
-  ctx.strokeStyle = '#03d6ff';
-  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#03D6FF';
+  ctx.lineWidth = 1.5;
   ctx.stroke();
-
-  ctx.fillStyle = '#fff';
+  ctx.fillStyle = '#FFF';
 
   for (const point of points) {
     ctx.beginPath();

@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 import { useHandTracking } from '../context/HandTrackingContext';
-import { PianoAudio } from '../lib/pianoAudio';
-import { getFingerAngle, isFingerPressed } from '../utils/handGesture';
+import { PianoAudio } from '../lib/audio/pianoAudio';
 import type { FingerName, FingerStates } from '../types';
 import { NOTES } from '../constants';
+import { getFingerAngle, isFingerPressed } from '../utils/hand/gestures';
 
 const FINGERS: FingerName[] = ['thumb', 'index', 'middle', 'ring', 'pinky'];
 
@@ -31,10 +31,7 @@ export const usePiano = (enabled: boolean, audio: PianoAudio | null) => {
       const hands = result?.landmarks ?? [];
       const handedness = result?.handedness ?? [];
 
-      const seenHands = {
-        Left: false,
-        Right: false,
-      };
+      const seenHands = { Left: false, Right: false };
 
       for (let handIndex = 0; handIndex < hands.length; handIndex++) {
         const hand = hands[handIndex];

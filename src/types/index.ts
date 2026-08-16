@@ -1,10 +1,20 @@
-import type { HandLandmarkerResult } from '@mediapipe/tasks-vision';
+import type { HandLandmarkerResult, NormalizedLandmark } from '@mediapipe/tasks-vision';
 import type { NOTE_FREQUENCIES } from '../constants';
 
 export type Listener = (result: HandLandmarkerResult | null) => void;
+
 export type HandTrackingContextValue = {
   videoRef: React.RefObject<HTMLVideoElement | null>;
+  latestResultRef: React.RefObject<HandLandmarkerResult | null>;
   subscribe: (listener: Listener) => () => void;
+};
+
+export type HandSide = 'Left' | 'Right';
+
+export type HandData = {
+  landmarks: NormalizedLandmark[];
+  handedness: HandLandmarkerResult['handedness'][number];
+  index: number;
 };
 
 export type HandCanvasProps = {

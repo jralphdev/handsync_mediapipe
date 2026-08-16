@@ -1,4 +1,4 @@
-import type { FingerName, PianoNote } from '../types';
+import type { FingerName } from '../types';
 
 export const LANDMARK = {
   WRIST: 0,
@@ -58,6 +58,24 @@ export const HAND_CONNECTIONS = [
   [LANDMARK.WRIST, LANDMARK.PINKY_MCP],
 ] as const;
 
+export const FINGER_JOINTS: Record<FingerName, readonly [number, number, number]> = {
+  thumb: [LANDMARK.THUMB_MCP, LANDMARK.THUMB_IP, LANDMARK.THUMB_TIP],
+  index: [LANDMARK.INDEX_MCP, LANDMARK.INDEX_PIP, LANDMARK.INDEX_DIP],
+  middle: [LANDMARK.MIDDLE_MCP, LANDMARK.MIDDLE_PIP, LANDMARK.MIDDLE_DIP],
+  ring: [LANDMARK.RING_MCP, LANDMARK.RING_PIP, LANDMARK.RING_DIP],
+  pinky: [LANDMARK.PINKY_MCP, LANDMARK.PINKY_PIP, LANDMARK.PINKY_DIP],
+};
+
+export const PINCH_GESTURE = {
+  startRatio: 0.2,
+  endRatio: 0.32,
+} as const;
+
+export const FINGER_PRESS = {
+  pressAngle: 135,
+  releaseAngle: 155,
+} as const;
+
 export const NOTE_FREQUENCIES = {
   C4: 261.63,
   D4: 293.66,
@@ -71,19 +89,7 @@ export const NOTE_FREQUENCIES = {
   E5: 659.25,
 } as const;
 
-export const FINGER_JOINTS: Record<FingerName, readonly [number, number, number]> = {
-  thumb: [LANDMARK.THUMB_MCP, LANDMARK.THUMB_IP, LANDMARK.THUMB_TIP],
-
-  index: [LANDMARK.INDEX_MCP, LANDMARK.INDEX_PIP, LANDMARK.INDEX_DIP],
-
-  middle: [LANDMARK.MIDDLE_MCP, LANDMARK.MIDDLE_PIP, LANDMARK.MIDDLE_DIP],
-
-  ring: [LANDMARK.RING_MCP, LANDMARK.RING_PIP, LANDMARK.RING_DIP],
-
-  pinky: [LANDMARK.PINKY_MCP, LANDMARK.PINKY_PIP, LANDMARK.PINKY_DIP],
-};
-
-export const NOTES: Record<'Left' | 'Right', Record<FingerName, PianoNote>> = {
+export const NOTES = {
   Left: {
     thumb: 'C4',
     index: 'D4',
@@ -99,4 +105,4 @@ export const NOTES: Record<'Left' | 'Right', Record<FingerName, PianoNote>> = {
     ring: 'D5',
     pinky: 'E5',
   },
-};
+} as const;

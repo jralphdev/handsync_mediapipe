@@ -1,54 +1,8 @@
 import type { NormalizedLandmark } from '@mediapipe/tasks-vision';
+import { createFilterPath, drawFilteredVideo, drawVideo } from './frame';
 
 const pixelCanvas = document.createElement('canvas');
 const pixelCtx = pixelCanvas.getContext('2d');
-
-const toPoint = (landmark: NormalizedLandmark, canvas: HTMLCanvasElement) => ({
-  x: landmark.x * canvas.width,
-  y: landmark.y * canvas.height,
-});
-
-const createFilterPath = (
-  ctx: CanvasRenderingContext2D,
-  hands: NormalizedLandmark[][],
-  canvas: HTMLCanvasElement,
-) => {
-  const points = [hands[0][4], hands[0][8], hands[1][8], hands[1][4]].map((landmark) =>
-    toPoint(landmark, canvas),
-  );
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-
-  for (const point of points.slice(1)) {
-    ctx.lineTo(point.x, point.y);
-  }
-
-  ctx.closePath();
-};
-
-const drawVideo = (
-  ctx: CanvasRenderingContext2D,
-  video: HTMLVideoElement,
-  canvas: HTMLCanvasElement,
-) => {
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-};
-
-const drawFilteredVideo = (
-  ctx: CanvasRenderingContext2D,
-  video: HTMLVideoElement,
-  canvas: HTMLCanvasElement,
-  filter: string,
-) => {
-  ctx.save();
-
-  ctx.filter = filter;
-
-  drawVideo(ctx, video, canvas);
-
-  ctx.restore();
-};
 
 const drawGlitch = (
   ctx: CanvasRenderingContext2D,
@@ -66,11 +20,9 @@ const drawGlitch = (
     const offset = (Math.random() - 0.5) * 40;
 
     ctx.save();
-
     ctx.beginPath();
     ctx.rect(0, y, canvas.width, height);
     ctx.clip();
-
     ctx.translate(offset, 0);
 
     drawVideo(ctx, video, canvas);
@@ -109,7 +61,6 @@ const drawVhs = (
   drawFilteredVideo(ctx, video, canvas, 'contrast(1.25) saturate(1.4) sepia(0.15)');
 
   ctx.save();
-
   ctx.globalAlpha = 0.25;
   ctx.fillStyle = '#00ffff';
 
@@ -133,7 +84,6 @@ const drawCyberNeon = (
   );
 
   ctx.save();
-
   ctx.globalAlpha = 0.15;
   ctx.fillStyle = '#00ffff';
 
@@ -195,11 +145,8 @@ const drawPixelate = (
   pixelCtx.drawImage(video, 0, 0, width, height);
 
   ctx.save();
-
   ctx.imageSmoothingEnabled = false;
-
   ctx.drawImage(pixelCanvas, 0, 0, width, height, 0, 0, canvas.width, canvas.height);
-
   ctx.restore();
 };
 
@@ -209,14 +156,12 @@ const drawDream = (
   canvas: HTMLCanvasElement,
 ) => {
   ctx.save();
-
   ctx.globalAlpha = 0.7;
 
   drawFilteredVideo(ctx, video, canvas, 'blur(2px) saturate(1.8) brightness(1.15)');
 
   ctx.globalAlpha = 0.3;
   ctx.globalCompositeOperation = 'screen';
-
   ctx.filter = 'blur(8px) saturate(2)';
 
   drawVideo(ctx, video, canvas);
@@ -252,39 +197,30 @@ export const applyFilter = (
     case 1:
       drawGlitch(ctx, video, canvas);
       break;
-
     case 2:
       drawRgbSplit(ctx, video, canvas);
       break;
-
     case 3:
       drawVhs(ctx, video, canvas);
       break;
-
     case 4:
       drawCyberNeon(ctx, video, canvas);
       break;
-
     case 5:
       drawThermal(ctx, video, canvas);
       break;
-
     case 6:
       drawPsychedelic(ctx, video, canvas);
       break;
-
     case 7:
       drawInverted(ctx, video, canvas);
       break;
-
     case 8:
       drawPixelate(ctx, video, canvas);
       break;
-
     case 9:
       drawDream(ctx, video, canvas);
       break;
-
     case 10:
       drawHighContrast(ctx, video, canvas);
       break;
